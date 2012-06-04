@@ -76,7 +76,8 @@ module RestClient
         args[:max_redirects] = request.max_redirects - 1
         # pass any cookie set in the result
         if result && result['set-cookie']
-          args[:headers][:cookies] = (args[:headers][:cookies] || {}).merge(parse_cookie(result['set-cookie']))
+          cookies = Hash[result.get_fields('set-cookie').map{|c|c.split(';').first.split("=",2)}]
+          args[:headers][:cookies] = (args[:headers][:cookies] || {}).merge(cookies)
         end
       end
       Request.execute args, &block
